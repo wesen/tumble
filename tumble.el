@@ -149,18 +149,19 @@
   (setq tumble-group nil))
 
 ;;;###autoload
-(defun tumble-text-from-region (min max title state)
+(defun tumble-text-from-region (min max title state tags)
   "Post the current region as a text in Tumblr"
-  (interactive "r \nsTitle: \nsState (published or draft): ")
+  (interactive "r \nsTitle: \nsState (published or draft): \nsTags (comma separated): ")
   (tumble-post-text title (tumble-region-text)
-                    (tumble-state-from-partial-string state)))
+                    (tumble-state-from-partial-string state) tags))
 
 ;;;###autoload
-(defun tumble-text-from-buffer (title state)
+(defun tumble-text-from-buffer (title state tags)
   "Post the current buffer as a text in Tumblr"
-  (interactive "sTitle: \nsState (published or draft): ")
+  (interactive "sTitle: \nsState (published or draft): \nsTags (comma separated): ")
   (tumble-text-from-region (point-min) (point-max) title
-                           (tumble-state-from-partial-string state)))
+                           (tumble-state-from-partial-string state)
+                           tags))
 
 ;;;###autoload
 (defun tumble-quote-from-region (min max source state)
@@ -246,12 +247,13 @@
          (state (read-string "State (published or draft): ")))
     (tumble-post-video embed caption (tumble-state-from-partial-string state))))
 
-(defun tumble-post-text (title body state)
+(defun tumble-post-text (title body state tags) 
   "Posts a new text to a tumblelog"
   (tumble-http-post
    (list (cons 'type "regular")
          (cons 'title title)
          (cons 'body body)
+         (cons 'tags tags)
          (cons 'state state))))
 
 (defun tumble-post-chat (title chat state)
